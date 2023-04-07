@@ -3,8 +3,8 @@ const {
   UserDuplicateError,
   UserWrongInformationsError,
   UserEmailValidationError,
-} = require('../errors/user.error');
-const { InternalError } = require('./errors');
+} = require('../errors/user.errors');
+const { InternalError } = require('../errors/errors');
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
