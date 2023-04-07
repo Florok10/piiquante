@@ -1,82 +1,68 @@
 const {
   UserPasswordValidationError,
   UserDuplicateError,
+  UserWrongInformationsError,
+  UserEmailValidationError,
 } = require('../errors/user.error');
-const { UserNotFoundError } = require('../errors/user.error');
+const { InternalError } = require('./errors');
 const User = require('../models/user.model');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const passwordReg = RegExp(
-  '^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]+$'
-);
+const passwordReg = /^([a-zA-Z0-9@$!%*#?&]){8,}/;
+const emailReg = /^^[\w-.]+@[\w-]+[.]+[\w-]{2,4}$/;
 
-const checkIfEmailIsRegistered = async (email, id) => {
-  const filter = !id
-    ? { email }
-    : {
-        email,
-        _id: {
-          $ne: id,
-        },
-      };
-  const userWithEmail = await User.findOne(filter);
+const checkIfEmailIsRegistered = async (email) => {
+  const userWithEmail = await User.findOne({ email });
   if (userWithEmail) throw new UserDuplicateError();
 };
 
-const checkIfPasswordMatchesRules = (password) => {
-  if (!(password.length < 8 && passwordReg.test(password)))
-    throw new UserPasswordValidationError();
+const checkIfEMailMatchesRules = async (email) => {
+  if (!emailReg.test(email)) throw new UserEmailValidationError();
 };
 
-const register = async (email, password) => {
-  const user = { email, password };
+const checkIfPasswordMatchesRules = async (password) => {
+  if (!passwordReg.test(password)) throw new UserPasswordValidationError();
+};
+
+const signup = async (email, password) => {
+  const user = { email: email.trim(), password: password.trim() };
 
   try {
-    checkIfPasswordMatchesRules(password);
+    await checkIfEMailMatchesRules(email);
+    await checkIfPasswordMatchesRules(password);
     await checkIfEmailIsRegistered(email);
-    await User.save(user);
+    user.password = await bcrypt.hash(user.password, 10);
+    await User.create(user);
+    return { code: 203, message: 'User created successfully !' };
   } catch (err) {
+    if (!err.code) {
+      console.error(err);
+      throw new InternalError();
+    }
     throw err;
   }
 };
 
-const getAll = async () => {
+const login = async (email, password) => {
   try {
-    return await User.find();
-  } catch (err) {
-    throw new Error(err);
-  }
-};
+    const user = await User.findOne({ email }).catch(() => null);
+    if (!user) throw new UserWrongInformationsError();
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) throw new UserWrongInformationsError();
 
-const get = async (id) => {
-  try {
-    const user = User.findById(id).catch(() => null);
-    if (!user) throw new UserNotFoundError();
+    const token = jwt.sign({ userId: user._id }, 'RANDOM_SECRET_KEY', {
+      expiresIn: '24h',
+    });
+
+    return { code: 200, user: { userId: user._id, token } };
   } catch (err) {
+    if (!err.code) {
+      console.error(err);
+      throw new InternalError();
+    }
     throw err;
   }
 };
 
-const update = async (update) => {
-  const { email, _id, password } = update;
-  try {
-    const user = User.findById(_id).catch(() => null);
-    if (!user) throw new UserNotFoundError();
-    await checkIfEmailIsRegistered(email, _id);
-    checkIfPasswordMatchesRules(password);
-    user.email = email;
-    user.password = password;
-    await user.save();
-  } catch (err) {
-    throw err;
-  }
-};
-
-const remove = async (_id) => {
-  try {
-    await User.findByIdAndDelete(_id);
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
-module.exports = { register, getAll, get, update, remove };
+module.exports = { signup, login };

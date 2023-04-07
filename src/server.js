@@ -20,6 +20,7 @@ function close() {
   if (server) {
     server.close();
     console.log('Server ended successfully');
+    process.exit();
   }
 }
 

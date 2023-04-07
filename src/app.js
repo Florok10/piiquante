@@ -5,7 +5,12 @@ const helmet = require('helmet');
 const app = express();
 
 app.use(helmet());
+app.use(express.json());
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
 
-app.use(router);
+app.use('/api', router);
 
 module.exports = app;

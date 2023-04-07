@@ -7,12 +7,11 @@ const URL =
   DB_URL.replace('<user>', DB_USER).replace('<password>', DB_PASSWORD) +
   DB_NAME;
 
-console.log('url', URL);
-
 const connect = async () => {
   try {
     await mongoose.connect(URL, {
       useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
     console.log('Connected to the database');
   } catch (err) {
