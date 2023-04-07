@@ -1,7 +1,15 @@
 class UserValidationError extends Error {
   constructor(error) {
-    super('Validation failed');
+    super('User validation failed');
     this.error = error;
+  }
+}
+
+class UserPasswordValidationError extends Error {
+  constructor() {
+    super(
+      'The password does not match the rules, one special character (@$!%*#?&) and minimum 8 characters'
+    );
   }
 }
 
@@ -19,6 +27,7 @@ class UserNotFoundError extends Error {
 
 module.exports = {
   UserValidationError,
+  UserPasswordValidationError,
   UserDuplicateError,
   UserNotFoundError,
 };
