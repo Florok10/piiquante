@@ -37,8 +37,7 @@ const signup = async (email, password) => {
     return { code: 203, message: 'User created successfully !' };
   } catch (err) {
     if (!err.code) {
-      console.error(err);
-      throw new InternalError();
+      throw new InternalError(err);
     }
     throw err;
   }
@@ -58,8 +57,7 @@ const login = async (email, password) => {
     return { code: 200, user: { userId: user._id, token } };
   } catch (err) {
     if (!err.code) {
-      console.error(err);
-      throw new InternalError();
+      throw new InternalError(err);
     }
     throw err;
   }

@@ -1,6 +1,6 @@
 class InternalError extends Error {
-  constructor() {
-    super('Internal server error');
+  constructor(err) {
+    super(err);
     this.code = 500;
   }
 }
