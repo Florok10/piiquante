@@ -9,13 +9,10 @@ const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+require('dotenv').config();
+
 const passwordReg = /^([a-zA-Z0-9@$!%*#?&]){8,}/;
 const emailReg = /^^[\w-.]+@[\w-]+[.]+[\w-]{2,4}$/;
-
-const checkIfEmailIsRegistered = async (email) => {
-  const userWithEmail = await User.findOne({ email });
-  if (userWithEmail) throw new UserDuplicateError();
-};
 
 const checkIfEMailMatchesRules = async (email) => {
   if (!emailReg.test(email)) throw new UserEmailValidationError();
@@ -26,15 +23,16 @@ const checkIfPasswordMatchesRules = async (password) => {
 };
 
 const signup = async (email, password) => {
-  const user = { email: email.trim(), password: password.trim() };
-
   try {
+    const user = new User({ email, password });
     await checkIfEMailMatchesRules(email);
     await checkIfPasswordMatchesRules(password);
-    await checkIfEmailIsRegistered(email);
     user.password = await bcrypt.hash(user.password, 10);
-    await User.create(user);
-    return { code: 203, message: 'User created successfully !' };
+    await user.save().catch((err) => {
+      if (err.errors.email) throw new UserDuplicateError();
+      throw err;
+    });
+    return { code: 201, message: 'User created successfully !' };
   } catch (err) {
     if (!err.code) {
       throw new InternalError(err);
@@ -50,7 +48,7 @@ const login = async (email, password) => {
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new UserWrongInformationsError();
 
-    const token = jwt.sign({ userId: user._id }, 'RANDOM_SECRET_KEY', {
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_TOKEN, {
       expiresIn: '24h',
     });
 
