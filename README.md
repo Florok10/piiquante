@@ -30,7 +30,7 @@ npm run i
 npm run build:client
 ```
 
-    This will make angular build our **hot-takes** package.
+    This will make angular build our hot-takes package.
 
     You will have to have a MongoDB database up.
 
@@ -50,7 +50,7 @@ npm run build:client
 npm run start
 ```
 
-### The project is now running at [Address](http://localhost:4200)
+### The project is now running at [default address](http://localhost:4200)
 
 ## Postman
 
