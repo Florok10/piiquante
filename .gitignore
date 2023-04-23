@@ -1,4 +1,5 @@
 node_modules
-.env
+packages/*/node_modules
+packages/backend/.env
 
-src/images/*
+packages/backend/src/public/images/*

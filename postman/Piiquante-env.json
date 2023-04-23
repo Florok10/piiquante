@@ -1,0 +1,33 @@
+{
+	"id": "615da1b4-f872-4b9c-8f0a-89ac97144020",
+	"name": "Piiquante env",
+	"values": [
+		{
+			"key": "host",
+			"value": "localhost",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "port",
+			"value": "3000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "lastCreatedSauceId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2023-04-23T20:03:18.116Z",
+	"_postman_exported_using": "Postman/10.13.0"
+}

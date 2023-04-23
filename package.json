@@ -1,23 +1,19 @@
 {
-  "name": "piiquante_backend",
+  "name": "piiquante",
   "version": "1.0.0",
-  "main": "src/server.js",
-  "author": "Valentin Fekrach",
-  "license": "ISC",
-  "description": "",
+  "description": "An Openclassrooms web developer project",
+  "author": "Valentin Fekrach <fekrach.valentin@gmail.com>",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "start": "nodemon src/server.js"
+    "build:client": "lerna run build --scope hot-takes",
+    "start": "lerna run start --stream"
   },
-  "dependencies": {
-    "bcrypt": "^5.1.0",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "helmet": "^6.0.1",
-    "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3",
-    "mongoose-unique-validator": "^4.0.0"
-  },
+  "keywords": [],
+  "license": "MIT",
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "lerna": "^6.6.1"
   }
 }
