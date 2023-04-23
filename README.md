@@ -9,17 +9,23 @@
 ### First make sure to have Angular and Lerna installed on your machine
 
     In a terminal run :
-    	```npm i -g lerna@latest && npm i -g @angular/cli```
+    	```console
+        npm i -g lerna@latest && npm i -g @angular/cli
+        ```
 
 ### Then once you installed the project, at its **root**
 
     Still in a terminal :
-    	```npm run i```
+    	```console
+        npm run i
+        ```
 
     This will install the depedencies for our packages.
 
     Now that our depedencies are installed, run :
-    	```npm run build:client```
+    	```console
+        npm run build:client
+        ```
 
     This will make angular build our **hot-takes** package.
 
@@ -36,7 +42,9 @@
     - JWT_TOKEN String
 
     Now that everything is ready, go to the project's root and run :
-    	```npm run start```
+    	```console
+        npm run start
+        ```
 
 ### The project is now running at [Address](http://localhost:4200)
 
