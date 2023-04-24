@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { InternalError } = require('../errors/errors.js');
 const Sauce = require('../models/sauce.model.js');
 const fs = require('fs');
+const { SauceNotFoundError } = require('../errors/sauce.errors.js');
 
 const create = async (data, protocol, host) => {
   const filename = data.file.filename;
@@ -29,7 +30,10 @@ const getAll = async () =>
 
 const get = async (id) =>
   Sauce.findById(id)
-    .then((sauce) => ({ code: 200, sauce }))
+    .then((sauce) => {
+      if (sauce === null) throw new SauceNotFoundError();
+      return { code: 200, sauce };
+    })
     .catch((err) => {
       if (!err.code) throw new InternalError(err);
       throw err;
@@ -51,6 +55,7 @@ const update = async (update, protocol, host) => {
 
   return Sauce.findById(parsedUpdate.id)
     .then(async (sauce) => {
+      if (sauce === null) throw new SauceNotFoundError();
       const imagePath = 'src/public/' + sauce.imageUrl.split('public/')[1];
       sauce.name = parsedUpdate.name;
       sauce.description = parsedUpdate.description;
@@ -71,13 +76,14 @@ const update = async (update, protocol, host) => {
 
 const remove = async (_id) => {
   return Sauce.findById(_id)
-    .then((sauce) =>
-      Sauce.deleteOne({ _id }).then(async () => {
+    .then(async (sauce) => {
+      if (sauce === null) throw new SauceNotFoundError();
+      return Sauce.deleteOne({ _id }).then(async () => {
         const imagePath = 'src/public/' + sauce.imageUrl.split('public/')[1];
         fs.unlink(imagePath, handleUnlink);
         return { code: 200, message: 'Sauce deleted' };
-      })
-    )
+      });
+    })
     .catch((err) => {
       if (!err.code) throw new InternalError(err);
       throw err;
@@ -87,6 +93,7 @@ const remove = async (_id) => {
 const like = async (sauceId, userId, like) =>
   Sauce.findById(sauceId)
     .then(async (sauce) => {
+      if (sauce === null) throw new SauceNotFoundError();
       switch (like) {
         case -1: {
           sauce.dislikes++;

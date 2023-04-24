@@ -14,7 +14,6 @@
     "helmet": "^6.0.1",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.3",
-    "mongoose-find-or-error": "^1.0.1",
     "mongoose-unique-validator": "^4.0.0",
     "multer": "^1.4.5-lts.1"
   },

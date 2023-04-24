@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const findOrErrorPlugin = require('mongoose-find-or-error');
-const { SauceNotFoundError } = require('../errors/sauce.errors');
 
 const { Schema } = mongoose;
 
@@ -53,13 +51,6 @@ const sauceSchema = new Schema({
     type: [Schema.Types.ObjectId],
     default: [],
   },
-});
-
-sauceSchema.plugin(findOrErrorPlugin, {
-  getFindByIdError: (id, modelName) =>
-    new SauceNotFoundError(`Couldn't find ${modelName} by id ${id}`),
-  getFindOneError: (query, modelName) =>
-    new SauceNotFoundError(`Couldn't find ${modelName} by query ${query}`),
 });
 
 module.exports = mongoose.model('Sauce', sauceSchema);
