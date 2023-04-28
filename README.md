@@ -19,7 +19,7 @@ npm i -g lerna@latest && npm i -g @angular/cli
     Still in a terminal :
 
 ```console
-npm run i
+npm install
 ```
 
     This will install the depedencies for our packages.
