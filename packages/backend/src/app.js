@@ -13,7 +13,6 @@ const PORT = process.env.APP_PORT || 3000;
 
 app.set('port', PORT);
 app.use(helmet());
-app.use(limiter);
 app.use(
   mongoSanitize({
     replaceWith: '_',

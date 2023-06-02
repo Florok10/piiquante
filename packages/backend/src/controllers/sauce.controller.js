@@ -31,9 +31,8 @@ const updateHandler = (req, res) => {
   service
     .update(
       {
-        ...req.body,
+        sauce: { ...req.body },
         file: req.file,
-        userId: req.auth.userId,
         id: req.params.id,
       },
       req.protocol,

@@ -45,27 +45,29 @@ const handleUnlink = (err) => {
 
 const update = async (update, protocol, host) => {
   const filename = update.file && update.file.filename;
-  const parsedUpdate = update.file
+  const parsedSauce = update.file
+    ? JSON.parse(update.sauce.sauce)
+    : update.sauce;
+  const validSauce = update.file
     ? {
-        ...JSON.parse(update.sauce),
+        ...parsedSauce,
         imageUrl: `${protocol}://${host}/public/images/${filename}`,
-        id: update.id,
       }
-    : { ...JSON.parse(update.sauce), id: update.id };
+    : { ...parsedSauce };
 
-  return Sauce.findById(parsedUpdate.id)
+  return Sauce.findById(update.id)
     .then(async (sauce) => {
       if (sauce === null) throw new SauceNotFoundError();
       const imagePath = 'src/public/' + sauce.imageUrl.split('public/')[1];
-      sauce.name = parsedUpdate.name;
-      sauce.description = parsedUpdate.description;
-      if (parsedUpdate.imageUrl) sauce.imageUrl = parsedUpdate.imageUrl;
-      sauce.mainPepper = parsedUpdate.mainPepper;
-      sauce.manufacturer = parsedUpdate.manufacturer;
-      sauce.heat = parsedUpdate.heat;
+      sauce.name = validSauce.name;
+      sauce.description = validSauce.description;
+      if (validSauce.imageUrl) sauce.imageUrl = validSauce.imageUrl;
+      sauce.mainPepper = validSauce.mainPepper;
+      sauce.manufacturer = validSauce.manufacturer;
+      sauce.heat = validSauce.heat;
       await sauce.save();
 
-      fs.unlink(imagePath, handleUnlink);
+      if (validSauce.imageUrl) fs.unlink(imagePath, handleUnlink);
       return { code: 200, message: 'Sauce successfully updated' };
     })
     .catch((err) => {
